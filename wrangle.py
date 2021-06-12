@@ -58,11 +58,10 @@ def get_info(df):
     print(df.info())
 
     print('------------------------')
-    print('------------------------')
 
     print('------------------------')
     print('This dataframe has', df.shape[0], 'rows and', df.shape[1], 'columns.')
-    print('------------------------\\')
+    print('------------------------')
         
     print('Null count in dataframe:')
     print('------------------------')
@@ -73,24 +72,75 @@ def get_info(df):
 
 
 
+## GET VALUE COUNTS
+def value_counts(df, column):
+    for col in column:
+        print(col)
+        print(df[col].value_counts())
+        print('-------------')
+
+
 
 
 # PREPARE MY DATA
 
+def clean_zillow():
+    # change whitespaces to nan
+    df = df.replace(r'^\s*$', np.nan, regex=True)
+
+    # let's rename our columns so they are more clear
+    df.rename(columns={'bedroomcnt': 'num_bedroom', 
+                     'bathroomcnt': 'num_bathroom',
+                     'calculatedfinishedsquarefeet': 'finished_sqft',
+                     'taxvaluedollarcnt': 'tax_value',
+                     'yearbuilt': 'build_year',
+                     'taxamount': 'property_tax'}, inplace=True)
+
+    # drop all numms
+    df.dropna(inplace=True)
+
+    # print out count of nulls
+    print(df.isnull().sum())
+
+    print('This dataframe has', df.shape[0], 'rows and', df.shape[1], 'columns.')
+
+    # drop any duplicates from the dataframe
+    df.drop_duplicates(inplace=True)
+
+    # now that we've been able to drop any houses with duplicate parcel ids, we can drop the column
+    df.drop(columns='parcelid', inplace=True)
+
+    # this section addresses my fips code and 
+    df['fips'] = df['fips'].astype(str)
+    df.loc[df['fips'].str[0] == '6','State'] = 'California'
+    df.loc[df['fips'].str.contains('111'),'County'] = 'Ventura'
+    df.loc[df['fips'].str.contains('037'),'County'] = 'Los Angeles'
+    df.loc[df['fips'].str.contains('059'),'County'] = 'Orange'
+    df['fips'] = df['fips'].astype(float)
+    
+    df['tax_rate'] = (df['property_tax']/df['tax_value'] * 100)
+
+    return df
+
+
+
+
 # Address any outliers in my data
 
-def outlier_bound_calculation(df, variable):
+def outlier_bounds(df, columns):
     '''
-    calcualtes the lower and upper bound to locate outliers in variables
+    calculates the lower and upper bound to locate outliers in variables
     '''
-    quartile1, quartile3 = np.percentile(df[variable], [25,75])
-    IQR_value = quartile3 - quartile1
-    lower_bound = quartile1 - (1.5 * IQR_value)
-    upper_bound = quartile3 + (1.5 * IQR_value)
-    '''
-    returns the lowerbound and upperbound values
-    '''
-    return print(f'For {variable} the lower bound is {lower_bound} and  upper bound is {upper_bound}')
+    for i in columns:
+        quartile1, quartile3 = np.percentile(df[i], [25,75])
+        IQR_value = quartile3 - quartile1
+        lower_bound = max((quartile1 - (1.5 * IQR_value)),0)
+        upper_bound = min((quartile3 + (1.5 * IQR_value)),max(df[i]))
+        print(f'For {i} the lower bound is {lower_bound} and  upper bound is {upper_bound}')
+        
+        df = df[(df[i] <= upper_bound) & (df[i] > 0)]
+    
+    return df
 
 
 
