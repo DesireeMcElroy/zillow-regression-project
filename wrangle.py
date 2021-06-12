@@ -84,7 +84,7 @@ def value_counts(df, column):
 
 # PREPARE MY DATA
 
-def clean_zillow():
+def clean_zillow(df):
     # change whitespaces to nan
     df = df.replace(r'^\s*$', np.nan, regex=True)
 
@@ -112,10 +112,10 @@ def clean_zillow():
 
     # this section addresses my fips code and 
     df['fips'] = df['fips'].astype(str)
-    df.loc[df['fips'].str[0] == '6','State'] = 'California'
-    df.loc[df['fips'].str.contains('111'),'County'] = 'Ventura'
-    df.loc[df['fips'].str.contains('037'),'County'] = 'Los Angeles'
-    df.loc[df['fips'].str.contains('059'),'County'] = 'Orange'
+    df.loc[df['fips'].str[0] == '6','state'] = 'California'
+    df.loc[df['fips'].str.contains('111'),'county'] = 'Ventura'
+    df.loc[df['fips'].str.contains('037'),'county'] = 'Los Angeles'
+    df.loc[df['fips'].str.contains('059'),'county'] = 'Orange'
     df['fips'] = df['fips'].astype(float)
     
     df['tax_rate'] = (df['property_tax']/df['tax_value'] * 100)
