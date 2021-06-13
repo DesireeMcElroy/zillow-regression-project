@@ -8,8 +8,10 @@ from pydataset import data
 from scipy import stats
 from math import sqrt
 
-import sklearn.preprocessing
+
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.linear_model import LinearRegression, LassoLars, TweedieRegressor
 from sklearn.metrics import mean_squared_error, r2_score, explained_variance_score
 from sklearn.feature_selection import f_regression, SelectKBest, RFE
@@ -88,21 +90,8 @@ def clean_zillow(df):
     # change whitespaces to nan
     df = df.replace(r'^\s*$', np.nan, regex=True)
 
-    # let's rename our columns so they are more clear
-    df.rename(columns={'bedroomcnt': 'num_bedroom', 
-                     'bathroomcnt': 'num_bathroom',
-                     'calculatedfinishedsquarefeet': 'finished_sqft',
-                     'taxvaluedollarcnt': 'tax_value',
-                     'yearbuilt': 'build_year',
-                     'taxamount': 'property_tax'}, inplace=True)
-
-    # drop all numms
+    # drop all nulls
     df.dropna(inplace=True)
-
-    # print out count of nulls
-    print(df.isnull().sum())
-
-    print('This dataframe has', df.shape[0], 'rows and', df.shape[1], 'columns.')
 
     # drop any duplicates from the dataframe
     df.drop_duplicates(inplace=True)
@@ -118,7 +107,15 @@ def clean_zillow(df):
     df.loc[df['fips'].str.contains('059'),'county'] = 'Orange'
     df['fips'] = df['fips'].astype(float)
     
-    df['tax_rate'] = (df['property_tax']/df['tax_value'] * 100)
+    # let's rename our columns so they are more clear
+    df.rename(columns={'bedroomcnt': 'num_bedroom', 
+                     'bathroomcnt': 'num_bathroom',
+                     'calculatedfinishedsquarefeet': 'finished_sqft',
+                     'taxvaluedollarcnt': 'tax_value',
+                     'yearbuilt': 'build_year',
+                     'taxamount': 'tax_amount'}, inplace=True)
+
+    df['tax_rate'] = (df['tax_amount']/df['tax_value'] * 100)
 
     return df
 
@@ -161,6 +158,8 @@ def split_data(df):
     return train, validate, test
 
 
+
+
 ## MY MINMAX SCALER FUNCTION
 def min_max_scaler(X_train, X_validate, X_test, numeric_cols):
     """
@@ -194,7 +193,13 @@ def min_max_scaler(X_train, X_validate, X_test, numeric_cols):
         [X_test.index.values]
     )
 
-    return X_train_scaled, X_validate_scaled, X_test_scaled
+    # Overwriting columns in our input dataframes for simplicity
+    for i in numeric_cols:
+        X_train[i] = X_train_scaled[i]
+        X_validate[i] = X_validate_scaled[i]
+        X_test[i] = X_test_scaled[i]
+
+    return X_train, X_validate, X_test
 
 
 
