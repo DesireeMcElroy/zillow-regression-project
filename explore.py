@@ -10,6 +10,10 @@ import matplotlib.pyplot as plt
 ### Scatterplot
 
 def scatterplot(X, y, df):
+    '''
+    Takes in an X and y and a dataframe and creates a loop for a scatterplot
+    '''
+
     for i in X:
         sns.scatterplot(x=i, y=y, data=df)
         plt.show()
@@ -51,11 +55,16 @@ def explore_univariate(train, cat_vars, quant_vars):
         plt.show(p)
         print(descriptive_stats)
 
+
+
 def explore_bivariate(train, target, cat_vars, quant_vars):
     for cat in cat_vars:
         explore_bivariate_categorical(train, 'survived', cat)
     for quant in quant_vars:
         explore_bivariate_quant(train, 'survived', quant)
+
+
+
 
 def explore_multivariate(train, target, cat_vars, quant_vars):
     '''
