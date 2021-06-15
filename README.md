@@ -1,4 +1,4 @@
-## Goals
+## Project Goals
 1. Create a model that predicts tax values of single unit properties
 2. Determine the states and counties the properties are located in
 3. Determine the distribution of tax rates for each county
@@ -61,7 +61,7 @@ state | The state the property is located in | object
 
 ## Results
 The two tweedieregressor models with degrees of 0 or 1 outperformed the baseline:
-1. Lowest RMSE value of 186,000, almodt 25,000 less than my baseline
+1. Lowest RMSE value of 186,000, almost 25,000 less than my baseline
 2. Performed poorly on test dataset
 
 Need to improve model since it performed so poorly on test dataset.
