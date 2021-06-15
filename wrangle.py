@@ -56,6 +56,9 @@ def get_zillow():
 
 
 def get_info(df):
+    '''
+    This function takes in a dataframe and prints out information about the dataframe.
+    '''
 
     print(df.info())
 
@@ -76,6 +79,9 @@ def get_info(df):
 
 ## GET VALUE COUNTS
 def value_counts(df, column):
+    '''
+    This function takes in a dataframe and list of columns and prints value counts for each column.
+    '''
     for col in column:
         print(col)
         print(df[col].value_counts())
@@ -87,6 +93,10 @@ def value_counts(df, column):
 # PREPARE MY DATA
 
 def clean_zillow(df):
+    '''
+    This function takes in the zillow dataframe and cleans and prepares it by dropping nulls, dropping
+    duplicates, replacing whitespaces, renaming columns and creating a new tax rate column.
+    '''
     # change whitespaces to nan
     df = df.replace(r'^\s*$', np.nan, regex=True)
 
@@ -122,11 +132,11 @@ def clean_zillow(df):
 
 
 
-# Address any outliers in my data
+# Address any outliers in my data with no less than 0
 
 def outlier_bounds(df, columns):
     '''
-    calculates the lower and upper bound to locate outliers in variables
+    calculates the lower and upper bound to locate outliers in variables and then removes them.
     '''
     for i in columns:
         quartile1, quartile3 = np.percentile(df[i], [25,75])
@@ -208,6 +218,9 @@ def min_max_scaler(X_train, X_validate, X_test, numeric_cols):
 # KBEST FUNCTION
 
 def select_kbest(X_train_scaled, y_train, no_features):
+    '''
+    This function takes in scaled data and number of features and returns the top features
+    '''
     
     # using kbest
     f_selector = SelectKBest(score_func=f_regression, k=no_features)
@@ -225,6 +238,10 @@ def select_kbest(X_train_scaled, y_train, no_features):
 ## RFE FUNCTION
 
 def rfe(X_train_scaled, y_train, no_features):
+    '''
+    This function takes in scaled data and number of features and returns the top features
+    '''
+    
     # now using recursive feature elimination
     lm = LinearRegression()
     rfe = RFE(estimator=lm, n_features_to_select=no_features)
