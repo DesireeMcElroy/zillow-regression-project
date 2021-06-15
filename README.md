@@ -1,3 +1,7 @@
+# View my completed powerpoint presentation [here](https://drive.google.com/file/d/1l5s-7Zic5we-YdFOXZaMecIo65LaYLRg/view?usp=sharing)!
+
+
+
 ## Project Goals
 1. Create a model that predicts tax values of single unit properties
 2. Determine the states and counties the properties are located in
