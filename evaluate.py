@@ -44,7 +44,7 @@ def plot_residuals(df, y, yhat):
 
 def regression_errors(df, y, yhat):
     '''
-    
+    Takes in a dataframe, a ytarget and yprediction and returns SSE, MSE, RMSE, ESS, TSS and R2
     '''
     
     SSE = mean_squared_error(y, yhat)*len(df)
@@ -72,6 +72,9 @@ def regression_errors(df, y, yhat):
 
 
 def baseline_mean_errors(df, y, yhat_baseline):
+    '''
+    Takes in a dataframe, ytarget and ypred_baseline and returns SSE, MSE, RMSE
+    '''
     
     SSE_baseline = mean_squared_error(y, yhat_baseline)*len(df)
     
@@ -88,6 +91,9 @@ def baseline_mean_errors(df, y, yhat_baseline):
 
 
 def better_than_baseline(df, y, yhat, yhat_baseline):
+    '''
+    Takes in a dataframe, ytarget, y_pred and ypred_baseline and returns which performed better.
+    '''
 
         RMSE = sqrt(mean_squared_error(y, yhat))
     
@@ -107,26 +113,39 @@ def better_than_baseline(df, y, yhat, yhat_baseline):
 
 
 
-def select_kbest(X_train, y_train, no_features):
+# KBEST FUNCTION
+
+def select_kbest(X_train_scaled, y_train, no_features):
+    '''
+    This function takes in scaled data and number of features and returns the top features
+    '''
     
     # using kbest
     f_selector = SelectKBest(score_func=f_regression, k=no_features)
     
     # fit
-    f_selector.fit(X_train, y_train)
+    f_selector.fit(X_train_scaled, y_train)
 
     # display the two most important features
     mask = f_selector.get_support()
     
-    return X_train.columns[mask]
+    return X_train_scaled.columns[mask]
 
 
 
-def rfe(x_train, y_train, no_features):
+## RFE FUNCTION
+
+def rfe(X_train_scaled, y_train, no_features):
+    '''
+    This function takes in scaled data and number of features and returns the top features
+    '''
+    
     # now using recursive feature elimination
     lm = LinearRegression()
     rfe = RFE(estimator=lm, n_features_to_select=no_features)
-    rfe.fit(x_train, y_train)
+    rfe.fit(X_train_scaled, y_train)
 
     # returning the top chosen features
-    return x_train.columns[rfe.support_]
+    return X_train_scaled.columns[rfe.support_]
+
+
